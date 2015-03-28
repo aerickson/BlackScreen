@@ -65,33 +65,21 @@ int main(int argc, char *argv[]) {
 		 */
 		screenWallpapers = [NSMutableDictionary dictionaryWithContentsOfFile:[@"~/Library/preferences/net.threestrangedays.blackScreen.plist" stringByExpandingTildeInPath]];
 	}
-	if ([screenWallpapers objectForKey:@"isBlack"] == [NSNumber numberWithBool:YES]) {
-		/*
-		 * The "isBlack" key in the Dictionary was defined and set true.
-		 * This means the application has been ran before, and blacked the wallpapers
-		 * We need to restore the user's wallpapers
-		 */
-		for (NSScreen *screen in screens) {
-			NSNumber *screenID = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
-			NSString *currentWallpaperString = [screenWallpapers objectForKey:[screenID stringValue]];
-			NSURL *currenWallpaper = [NSURL URLWithString:currentWallpaperString];
-			[[NSWorkspace sharedWorkspace] setDesktopImageURL:currenWallpaper forScreen:screen options:nil error:nil];
-			[screenWallpapers setObject:[NSNumber numberWithBool:NO] forKey:@"isBlack"];
-		}
-	} else {
-		/*
-		 * The "isBlack" key is either not defined or false.
-		 * We can black the wallpapers.
-		 */
-		for (NSScreen *screen in screens) {
-			NSURL *currentWallpaper = [[NSWorkspace sharedWorkspace] desktopImageURLForScreen:screen];
-			NSNumber *screenID = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
-			[screenWallpapers setObject:[currentWallpaper absoluteString] forKey:[screenID stringValue]];
-			NSURL *url = [NSURL fileURLWithPath:[filename stringByExpandingTildeInPath]];
-			[[NSWorkspace sharedWorkspace] setDesktopImageURL:url forScreen:screen options:nil error:nil];
-		}
-		[screenWallpapers setObject:[NSNumber numberWithBool:YES] forKey:@"isBlack"];
+
+
+	/*
+	 * The "isBlack" key is either not defined or false.
+	 * We can black the wallpapers.
+	 */
+	for (NSScreen *screen in screens) {
+		NSURL *currentWallpaper = [[NSWorkspace sharedWorkspace] desktopImageURLForScreen:screen];
+		NSNumber *screenID = [[screen deviceDescription] objectForKey:@"NSScreenNumber"];
+		[screenWallpapers setObject:[currentWallpaper absoluteString] forKey:[screenID stringValue]];
+		NSURL *url = [NSURL fileURLWithPath:[filename stringByExpandingTildeInPath]];
+		[[NSWorkspace sharedWorkspace] setDesktopImageURL:url forScreen:screen options:nil error:nil];
 	}
+	[screenWallpapers setObject:[NSNumber numberWithBool:YES] forKey:@"isBlack"];
+
 	/*
 	 * Write out the new Preference file.
 	 */
